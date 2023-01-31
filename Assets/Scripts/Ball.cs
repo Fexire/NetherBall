@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 
-public class Ball : NetworkBehaviour
+public class Ball : MonoBehaviour
 {
 
     [SerializeField]

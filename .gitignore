@@ -27,6 +27,8 @@
 .vs/
 .vscode/
 
+Assets/Mirror
+
 # Gradle cache directory
 .gradle/
 

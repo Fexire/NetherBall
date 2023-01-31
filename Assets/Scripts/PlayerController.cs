@@ -3,10 +3,9 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using Unity.Netcode;
 
 
-public class PlayerController : NetworkBehaviour
+public class PlayerController : MonoBehaviour
 {
 
     [SerializeField]

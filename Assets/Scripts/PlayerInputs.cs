@@ -242,7 +242,7 @@ public partial class @PlayerInputs : IInputActionCollection2, IDisposable
                     ""id"": ""82bed1e2-5572-4f68-907e-fc65965600f0"",
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""ScaleVector2(x=0.1,y=0.1)"",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Look"",
                     ""isComposite"": false,
@@ -251,7 +251,7 @@ public partial class @PlayerInputs : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""26b7c43c-ae58-4c95-896f-b4d6a4656747"",
-                    ""path"": ""<Gamepad>/rightStick"",
+                    ""path"": ""<XInputController>/rightStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Controller"",

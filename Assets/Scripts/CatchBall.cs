@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class CatchBall : MonoBehaviour
 {
-    private PlayerController playerController;
+    private Player playerController;
     private void Awake()
     {
-        playerController = GetComponentInParent<PlayerController>();
+        playerController = GetComponentInParent<Player>();
     }
     private void OnTriggerEnter(Collider other)
     {

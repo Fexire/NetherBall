@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Ball : MonoBehaviour
+public class Ball : NetworkBehaviour
 {
 
     [SerializeField]
@@ -17,7 +18,6 @@ public class Ball : MonoBehaviour
     public void Catch()
     {
         this.gameObject.SetActive(false);
-
     }
 
     private void Start()

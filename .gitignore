@@ -28,6 +28,7 @@
 .vscode/
 
 Assets/Mirror
+Assets/ParrelSync
 
 # Gradle cache directory
 .gradle/

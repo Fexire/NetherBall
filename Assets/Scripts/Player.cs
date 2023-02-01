@@ -3,9 +3,10 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using Mirror;
 
 
-public class PlayerController : MonoBehaviour
+public class Player : NetworkBehaviour
 {
 
     [SerializeField]
@@ -14,28 +15,43 @@ public class PlayerController : MonoBehaviour
     private float JumpHeight;
     [SerializeField]
     private float DashMagnitude;
-    public Slider slider;
+    [SerializeField]
+    private Camera PlayerCamera;
+    [SerializeField]
+    private HealthBar healthBar;
     private Rigidbody RigidBody;
-    public Camera PlayerCamera;
     private int NumberOfCollisions = 0;
     private List<Ball> ClosestBalls = new List<Ball>();
     private List<Ball> balls = new List<Ball>();
     private Vector3 CollisionNormal;
     private Vector3 move;
+    private float health = 1f;
 
-    public void Hit()
+
+
+    private void Start()
     {
-        slider.value -= 0.1f;
-        if (slider.value <= 0)
+        if (isLocalPlayer)
         {
-            Object.Destroy(this.gameObject, 0.5f);
+            PlayerCamera.enabled = true;
+            GameObject.FindGameObjectWithTag("ServerCamera").GetComponent<Camera>().enabled = false;
+            healthBar.SetActive(false);
         }
+    }
 
+    private void Hit()
+    {
+        health -= 0.1f;
+        if (health <= 0)
+        {
+            NetworkServer.Destroy(this.gameObject);
+        }
+        healthBar.SetSliderValue(health);
     }
     private void Awake()
     {
         RigidBody = GetComponent<Rigidbody>();
-        slider.value = 1f;
+        healthBar.SetSliderValue(health);
     }
 
     public void EnablePlayerCamera(bool enable)
@@ -58,15 +74,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Fire(InputAction.CallbackContext ctx)
-    {
-        if (balls.Count > 0)
-        {
-            Ball ball = balls[balls.Count - 1];
-            ball.Throw(PlayerCamera.transform, RigidBody.velocity);
-            balls.RemoveAt(balls.Count - 1);
-        }
-    }
+
 
     public void Move(InputAction.CallbackContext ctx)
     {
@@ -79,18 +87,38 @@ public class PlayerController : MonoBehaviour
         move = forwardVector * vector2Movement.y + rightVector * vector2Movement.x;
     }
 
+    public void Fire(InputAction.CallbackContext ctx)
+    {
+        if (balls.Count > 0)
+        {
+            Ball ball = balls[balls.Count - 1];
+            RpcFire(ball);
+            balls.RemoveAt(balls.Count - 1);
+        }
+    }
+
+    [ClientRpc]
+    private void RpcFire(Ball ball)
+    {
+        ball.Throw(PlayerCamera.transform, RigidBody.velocity);
+    }
+
     public void Catch(InputAction.CallbackContext ctx)
     {
-        Debug.Log("catch");
         if (ClosestBalls.Count > 0)
         {
             Ball ball = ClosestBalls[ClosestBalls.Count - 1];
             ball.GetComponent<HighLight>().SwapMaterial();
-            ball.Catch();
+            RpcCatch(ball);
             balls.Add(ball);
             ClosestBalls.RemoveAt(ClosestBalls.Count - 1);
         }
-        Debug.Log(balls.Count);
+    }
+
+    [ClientRpc]
+    private void RpcCatch(Ball ball)
+    {
+        ball.Catch();
     }
 
     private void FixedUpdate()
@@ -103,6 +131,10 @@ public class PlayerController : MonoBehaviour
     {
         NumberOfCollisions++;
         CollisionNormal += other.GetContact(0).normal;
+        if (other.gameObject.tag == "Ball")
+        {
+            Hit();
+        }
     }
 
     private void OnCollisionStay(Collision other)
